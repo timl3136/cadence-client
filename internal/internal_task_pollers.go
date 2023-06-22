@@ -300,7 +300,16 @@ func newWorkflowTaskPoller(
 // PollTask polls a new task
 func (wtp *workflowTaskPoller) PollTask() (interface{}, error) {
 	// emit hardware
-	emitHardwareMetricsTaggedScope(wtp.metricsScope)
+	err := emitHardwareMetricsTaggedScope(wtp.metricsScope)
+	if err != nil {
+		wtp.logger.Error("cannot emit hardware usage", zap.Error(err))
+	}
+	cpuPercent, _ := cpu.Percent(0, false)
+	wtp.logger.Info("Hardware: CPU percentage", zap.Float64("cpu", cpuPercent[0]))
+
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+	wtp.logger.Info("Hardware: Total ram", zap.Float64("ram", float64(memStats.Sys)))
 
 	// Get the task.
 	workflowTask, err := wtp.doPoll(wtp.featureFlags, wtp.poll)
@@ -1091,7 +1100,10 @@ func (atp *activityTaskPoller) pollWithMetrics(ctx context.Context,
 
 // PollTask polls a new task
 func (atp *activityTaskPoller) PollTask() (interface{}, error) {
-	emitHardwareMetricsTaggedScope(atp.metricsScope)
+	err := emitHardwareMetricsTaggedScope(atp.metricsScope)
+	if err != nil {
+		atp.logger.Error("cannot emit hardware usage", zap.Error(err))
+	}
 	// Get the task.
 	activityTask, err := atp.doPoll(atp.featureFlags, atp.pollWithMetricsFunc(atp.poll))
 	if err != nil {
@@ -1163,7 +1175,10 @@ func newLocallyDispatchedActivityTaskPoller(taskHandler ActivityTaskHandler, ser
 
 // PollTask polls a new task
 func (atp *locallyDispatchedActivityTaskPoller) PollTask() (interface{}, error) {
-	emitHardwareMetricsTaggedScope(atp.metricsScope)
+	err := emitHardwareMetricsTaggedScope(atp.metricsScope)
+	if err != nil {
+		atp.logger.Error("cannot emit hardware usage", zap.Error(err))
+	}
 	// Get the task.
 	activityTask, err := atp.doPoll(atp.featureFlags, atp.pollWithMetricsFunc(atp.pollLocallyDispatchedActivity))
 	if err != nil {
@@ -1379,10 +1394,15 @@ func convertActivityResultToRespondRequestByID(identity, domain, workflowID, run
 		Identity:   common.StringPtr(identity)}
 }
 
-func emitHardwareMetricsTaggedScope(scope *metrics.TaggedScope) {
-	cpuPercent, _ := cpu.Percent(0, false)
-	cpuCores, _ := cpu.Counts(false)
-
+func emitHardwareMetricsTaggedScope(scope *metrics.TaggedScope) error {
+	cpuPercent, err := cpu.Percent(0, false)
+	if err != nil {
+		return err
+	}
+	cpuCores, err := cpu.Counts(false)
+	if err != nil {
+		return err
+	}
 	scope.Gauge(metrics.NumCPUCores).Update(float64(cpuCores))
 	scope.Gauge(metrics.CPUPercentage).Update(cpuPercent[0])
 
@@ -1392,11 +1412,19 @@ func emitHardwareMetricsTaggedScope(scope *metrics.TaggedScope) {
 	scope.Gauge(metrics.TotalMemory).Update(float64(memStats.Sys))
 	scope.Gauge(metrics.MemoryUsedHeap).Update(float64(memStats.HeapInuse))
 	scope.Gauge(metrics.MemoryUsedStack).Update(float64(memStats.StackInuse))
+
+	return nil
 }
 
-func emitHardwareMetricsTallyScope(scope tally.Scope) {
-	cpuPercent, _ := cpu.Percent(0, false)
-	cpuCores, _ := cpu.Counts(false)
+func emitHardwareMetricsTallyScope(scope tally.Scope) error {
+	cpuPercent, err := cpu.Percent(0, false)
+	if err != nil {
+		return err
+	}
+	cpuCores, err := cpu.Counts(false)
+	if err != nil {
+		return err
+	}
 
 	scope.Gauge(metrics.NumCPUCores).Update(float64(cpuCores))
 	scope.Gauge(metrics.CPUPercentage).Update(cpuPercent[0])
@@ -1407,4 +1435,6 @@ func emitHardwareMetricsTallyScope(scope tally.Scope) {
 	scope.Gauge(metrics.TotalMemory).Update(float64(memStats.Sys))
 	scope.Gauge(metrics.MemoryUsedHeap).Update(float64(memStats.HeapInuse))
 	scope.Gauge(metrics.MemoryUsedStack).Update(float64(memStats.StackInuse))
+
+	return nil
 }
