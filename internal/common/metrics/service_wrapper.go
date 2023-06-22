@@ -22,11 +22,9 @@ package metrics
 
 import (
 	"context"
-	"runtime"
 	"sync"
 	"time"
 
-	"github.com/shirou/gopsutil/cpu"
 	"github.com/uber-go/tally"
 	"go.uber.org/yarpc"
 
@@ -115,23 +113,6 @@ func (w *workflowServiceMetricsWrapper) getOperationScope(scopeName string) *ope
 	scope.Counter(CadenceRequest).Inc(1)
 
 	return &operationScope{scope: scope, startTime: time.Now()}
-}
-
-func (s *operationScope) emitCPUMetrics() {
-	cpuPercent, _ := cpu.Percent(0, false)
-	cpuCores, _ := cpu.Counts(false)
-
-	s.scope.Gauge(NumCPUCores).Update(float64(cpuCores))
-	s.scope.Gauge(CPUPercentage).Update(cpuPercent[0])
-}
-
-func (s *operationScope) emitRAMMetrics() {
-	var memStats runtime.MemStats
-	runtime.ReadMemStats(&memStats)
-
-	s.scope.Gauge(TotalMemory).Update(float64(memStats.Sys))
-	s.scope.Gauge(MemoryUsedHeap).Update(float64(memStats.HeapInuse))
-	s.scope.Gauge(MemoryUsedStack).Update(float64(memStats.StackInuse))
 }
 
 func (s *operationScope) handleError(err error) {
@@ -230,8 +211,6 @@ func (w *workflowServiceMetricsWrapper) CountWorkflowExecutions(ctx context.Cont
 
 func (w *workflowServiceMetricsWrapper) PollForActivityTask(ctx context.Context, request *shared.PollForActivityTaskRequest, opts ...yarpc.CallOption) (*shared.PollForActivityTaskResponse, error) {
 	scope := w.getOperationScope(scopeNamePollForActivityTask)
-	scope.emitRAMMetrics()
-	scope.emitCPUMetrics()
 	result, err := w.service.PollForActivityTask(ctx, request, opts...)
 	scope.handleError(err)
 	return result, err
@@ -239,8 +218,6 @@ func (w *workflowServiceMetricsWrapper) PollForActivityTask(ctx context.Context,
 
 func (w *workflowServiceMetricsWrapper) PollForDecisionTask(ctx context.Context, request *shared.PollForDecisionTaskRequest, opts ...yarpc.CallOption) (*shared.PollForDecisionTaskResponse, error) {
 	scope := w.getOperationScope(scopeNamePollForDecisionTask)
-	scope.emitRAMMetrics()
-	scope.emitCPUMetrics()
 	result, err := w.service.PollForDecisionTask(ctx, request, opts...)
 	scope.handleError(err)
 	return result, err
