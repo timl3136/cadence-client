@@ -300,16 +300,17 @@ func newWorkflowTaskPoller(
 // PollTask polls a new task
 func (wtp *workflowTaskPoller) PollTask() (interface{}, error) {
 	// emit hardware
-	err := emitHardwareMetricsTaggedScope(wtp.metricsScope)
-	if err != nil {
-		wtp.logger.Error("cannot emit hardware usage", zap.Error(err))
-	}
 	cpuPercent, _ := cpu.Percent(0, false)
-	wtp.logger.Info("Hardware: CPU percentage", zap.Float64("cpu", cpuPercent[0]))
+	cpuCores, _ := cpu.Counts(false)
+	wtp.metricsScope.Gauge(metrics.NumCPUCores).Update(float64(cpuCores))
+	wtp.metricsScope.Gauge(metrics.CPUPercentage).Update(cpuPercent[0])
 
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
-	wtp.logger.Info("Hardware: Total ram", zap.Float64("ram", float64(memStats.Sys)))
+
+	wtp.metricsScope.Gauge(metrics.TotalMemory).Update(float64(memStats.Sys))
+	wtp.metricsScope.Gauge(metrics.MemoryUsedHeap).Update(float64(memStats.HeapInuse))
+	wtp.metricsScope.Gauge(metrics.MemoryUsedStack).Update(float64(memStats.StackInuse))
 
 	// Get the task.
 	workflowTask, err := wtp.doPoll(wtp.featureFlags, wtp.poll)
