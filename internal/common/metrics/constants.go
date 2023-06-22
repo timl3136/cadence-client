@@ -107,4 +107,10 @@ const (
 	ReplayFailedCounter  = CadenceMetricsPrefix + "replay-failed"
 	ReplaySkippedCounter = CadenceMetricsPrefix + "replay-skipped"
 	ReplayLatency        = CadenceMetricsPrefix + "replay-latency"
+
+	NumCPUCores     = CadenceMetricsPrefix + "num-cpu-cores"
+	CPUPercentage   = CadenceMetricsPrefix + "cpu-percentage"
+	TotalMemory     = CadenceMetricsPrefix + "total-memory"
+	MemoryUsedHeap  = CadenceMetricsPrefix + "memory-used-heap"
+	MemoryUsedStack = CadenceMetricsPrefix + "memory-used-stack"
 )
