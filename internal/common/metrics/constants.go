@@ -113,4 +113,5 @@ const (
 	TotalMemory     = CadenceMetricsPrefix + "total-memory"
 	MemoryUsedHeap  = CadenceMetricsPrefix + "memory-used-heap"
 	MemoryUsedStack = CadenceMetricsPrefix + "memory-used-stack"
+	NumGoRoutines   = CadenceMetricsPrefix + "num-go-routines"
 )
