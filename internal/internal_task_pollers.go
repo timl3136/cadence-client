@@ -299,18 +299,6 @@ func newWorkflowTaskPoller(
 
 // PollTask polls a new task
 func (wtp *workflowTaskPoller) PollTask() (interface{}, error) {
-	// emit hardware
-	cpuPercent, _ := cpu.Percent(0, false)
-	cpuCores, _ := cpu.Counts(false)
-	wtp.metricsScope.Gauge(metrics.NumCPUCores).Update(float64(cpuCores))
-	wtp.metricsScope.Gauge(metrics.CPUPercentage).Update(cpuPercent[0])
-
-	var memStats runtime.MemStats
-	runtime.ReadMemStats(&memStats)
-
-	wtp.metricsScope.Gauge(metrics.TotalMemory).Update(float64(memStats.Sys))
-	wtp.metricsScope.Gauge(metrics.MemoryUsedHeap).Update(float64(memStats.HeapInuse))
-	wtp.metricsScope.Gauge(metrics.MemoryUsedStack).Update(float64(memStats.StackInuse))
 
 	// Get the task.
 	workflowTask, err := wtp.doPoll(wtp.featureFlags, wtp.poll)
@@ -780,6 +768,19 @@ func (wtp *workflowTaskPoller) poll(ctx context.Context) (interface{}, error) {
 	startTime := time.Now()
 	wtp.metricsScope.Counter(metrics.DecisionPollCounter).Inc(1)
 
+	// emit hardware
+	cpuPercent, _ := cpu.Percent(0, false)
+	cpuCores, _ := cpu.Counts(false)
+	wtp.metricsScope.Gauge(metrics.NumCPUCores).Update(float64(cpuCores))
+	wtp.metricsScope.Gauge(metrics.CPUPercentage).Update(cpuPercent[0])
+
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+
+	wtp.metricsScope.Gauge(metrics.TotalMemory).Update(float64(memStats.Sys))
+	wtp.metricsScope.Gauge(metrics.MemoryUsedHeap).Update(float64(memStats.HeapInuse))
+	wtp.metricsScope.Gauge(metrics.MemoryUsedStack).Update(float64(memStats.StackInuse))
+
 	traceLog(func() {
 		wtp.logger.Debug("workflowTaskPoller::Poll")
 	})
@@ -1021,6 +1022,19 @@ func (atp *activityTaskPoller) poll(ctx context.Context) (*s.PollForActivityTask
 
 	atp.metricsScope.Counter(metrics.ActivityPollCounter).Inc(1)
 	startTime := time.Now()
+
+	// emit hardware
+	cpuPercent, _ := cpu.Percent(0, false)
+	cpuCores, _ := cpu.Counts(false)
+	atp.metricsScope.Gauge(metrics.NumCPUCores).Update(float64(cpuCores))
+	atp.metricsScope.Gauge(metrics.CPUPercentage).Update(cpuPercent[0])
+
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+
+	atp.metricsScope.Gauge(metrics.TotalMemory).Update(float64(memStats.Sys))
+	atp.metricsScope.Gauge(metrics.MemoryUsedHeap).Update(float64(memStats.HeapInuse))
+	atp.metricsScope.Gauge(metrics.MemoryUsedStack).Update(float64(memStats.StackInuse))
 
 	traceLog(func() {
 		atp.logger.Debug("activityTaskPoller::Poll")
