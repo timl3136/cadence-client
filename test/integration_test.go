@@ -38,6 +38,8 @@ import (
 	"go.uber.org/goleak"
 	"go.uber.org/zap/zaptest"
 
+	"github.com/opentracing/opentracing-go/mocktracer"
+
 	"go.uber.org/cadence"
 	"go.uber.org/cadence/.gen/go/shared"
 	"go.uber.org/cadence/client"
@@ -98,7 +100,7 @@ func (ts *IntegrationTestSuite) SetupSuite() {
 	ts.Assertions = require.New(ts.T())
 	ts.config = newConfig()
 	ts.activities = newActivities()
-	ts.workflows = &Workflows{}
+	ts.workflows = &Workflows{tracer: mocktracer.New()}
 	ts.Nil(waitForTCP(time.Minute, ts.config.ServiceAddr))
 	var err error
 	if ts.config.EnableGrpcAdapter {
@@ -109,6 +111,7 @@ func (ts *IntegrationTestSuite) SetupSuite() {
 	ts.NoError(err)
 	ts.libClient = client.NewClient(ts.rpcClient.Interface, domainName,
 		&client.Options{
+			Tracer:             ts.workflows.tracer,
 			ContextPropagators: []workflow.ContextPropagator{NewStringMapPropagator([]string{testContextKey})},
 		})
 	ts.domainClient = client.NewDomainClient(ts.rpcClient.Interface, &client.Options{})
@@ -154,6 +157,7 @@ func (ts *IntegrationTestSuite) SetupTest() {
 
 func (ts *IntegrationTestSuite) BeforeTest(suiteName, testName string) {
 	options := worker.Options{
+		Tracer:                            ts.workflows.tracer,
 		DisableStickyExecution:            ts.config.IsStickyOff,
 		Logger:                            zaptest.NewLogger(ts.T()),
 		WorkflowInterceptorChainFactories: []interceptors.WorkflowInterceptorFactory{ts.tracer},
@@ -545,6 +549,13 @@ func (ts *IntegrationTestSuite) TestNonDeterministicWorkflowQuery() {
 	ts.NoError(value.Get(&trace))
 }
 
+func (ts *IntegrationTestSuite) TestOverrideSpanContext() {
+	var result map[string]string
+	err := ts.executeWorkflow("test-override-span-context", ts.workflows.OverrideSpanContext, &result)
+	ts.NoError(err)
+	ts.Equal("some-value", result["mockpfx-baggage-some-key"])
+}
+
 func (ts *IntegrationTestSuite) registerDomain() {
 	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
@@ -587,10 +598,13 @@ func (ts *IntegrationTestSuite) executeWorkflowWithOption(
 	options client.StartWorkflowOptions, wfFunc interface{}, retValPtr interface{}, args ...interface{}) error {
 	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
-	run, err := ts.libClient.ExecuteWorkflow(ctx, options, wfFunc, args...)
+	span := ts.workflows.tracer.StartSpan("test-workflow")
+	defer span.Finish()
+	execution, err := ts.libClient.StartWorkflow(ctx, options, wfFunc, args...)
 	if err != nil {
 		return err
 	}
+	run := ts.libClient.GetWorkflow(ctx, execution.ID, execution.RunID)
 	err = run.Get(ctx, retValPtr)
 	logger := zaptest.NewLogger(ts.T())
 	if ts.config.Debug {

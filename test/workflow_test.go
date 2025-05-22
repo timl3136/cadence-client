@@ -27,6 +27,8 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/opentracing/opentracing-go"
+
 	"go.uber.org/cadence"
 	"go.uber.org/cadence/.gen/go/shared"
 	"go.uber.org/cadence/client"
@@ -41,6 +43,7 @@ const (
 
 type Workflows struct {
 	nonDeterminismSimulatorWorkflowCallCount int
+	tracer                                   opentracing.Tracer
 }
 
 func (w *Workflows) Basic(ctx workflow.Context) ([]string, error) {
@@ -617,6 +620,45 @@ func (w *Workflows) NonDeterminismSimulatorWorkflow(ctx workflow.Context) ([]str
 	return res, nil
 }
 
+func (w *Workflows) OverrideSpanContext(ctx workflow.Context) (map[string]string, error) {
+	type spanActivationResult struct {
+		Carrier map[string]string
+		Err     error
+	}
+	// start a short lived new workflow span within SideEffect to avoid duplicate span creation during replay
+	resultValue := workflow.SideEffect(ctx, func(ctx workflow.Context) interface{} {
+		wSpan := w.tracer.StartSpan("workflow-operation-with-new-span", opentracing.ChildOf(workflow.GetSpanContext(ctx)))
+		defer wSpan.Finish()
+		wSpan.SetBaggageItem("some-key", "some-value")
+		carrier := make(map[string]string)
+		err := w.tracer.Inject(wSpan.Context(), opentracing.TextMap, opentracing.TextMapCarrier(carrier))
+		return spanActivationResult{Carrier: carrier, Err: err}
+	})
+	var activationResult spanActivationResult
+	if err := resultValue.Get(&activationResult); err != nil {
+		return nil, fmt.Errorf("failed to decode span activation result: %v", err)
+	}
+	if activationResult.Err != nil {
+		return nil, fmt.Errorf("failed to activate new span: %v", activationResult.Err)
+	}
+	spanContext, err := w.tracer.Extract(opentracing.TextMap, opentracing.TextMapCarrier(activationResult.Carrier))
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract span context: %v", err)
+	}
+	ctx = workflow.WithSpanContext(ctx, spanContext)
+
+	opts := workflow.ActivityOptions{
+		ScheduleToStartTimeout: time.Second,
+		ScheduleToCloseTimeout: 10 * time.Second,
+		StartToCloseTimeout:    10 * time.Second,
+		HeartbeatTimeout:       2 * time.Second,
+	}
+	aCtx := workflow.WithActivityOptions(ctx, opts)
+	var res map[string]string
+	err = workflow.ExecuteActivity(aCtx, "inspectActivitySpan", "hello").Get(aCtx, &res)
+	return res, err
+}
+
 func (w *Workflows) register(worker worker.Worker) {
 	// Kept to verify backward compatibility of workflow registration.
 	workflow.RegisterWithOptions(w.Basic, workflow.RegisterOptions{DisableAlreadyRegisteredCheck: true})
@@ -646,6 +688,7 @@ func (w *Workflows) register(worker worker.Worker) {
 	worker.RegisterWorkflow(w.ConsistentQueryWorkflow)
 	worker.RegisterWorkflow(w.WorkflowWithLocalActivityCtxPropagation)
 	worker.RegisterWorkflow(w.NonDeterminismSimulatorWorkflow)
+	worker.RegisterWorkflow(w.OverrideSpanContext)
 
 }
 

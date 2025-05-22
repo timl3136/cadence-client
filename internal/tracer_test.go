@@ -82,7 +82,7 @@ func TestTracingContextPropagatorWorkflowContext(t *testing.T) {
 
 	span := tracer.StartSpan("test-operation")
 	assert.NotNil(t, span.Context())
-	ctx := contextWithSpan(Background(), span.Context())
+	ctx := WithSpanContext(Background(), span.Context())
 	header := &shared.Header{
 		Fields: map[string][]byte{},
 	}
@@ -96,9 +96,9 @@ func TestTracingContextPropagatorWorkflowContext(t *testing.T) {
 	returnCtx2, err := ctxProp.ExtractToWorkflow(Background(), NewHeaderReader(header))
 	require.NoError(t, err)
 
-	newSpanContext := spanFromContext(returnCtx)
+	newSpanContext := GetSpanContext(returnCtx)
 	assert.NotNil(t, newSpanContext)
-	newSpanContext2 := spanFromContext(returnCtx2)
+	newSpanContext2 := GetSpanContext(returnCtx2)
 	assert.NotNil(t, newSpanContext2)
 	assert.Equal(t, newSpanContext2, newSpanContext)
 }
@@ -130,7 +130,7 @@ func TestConsistentInjectionExtraction(t *testing.T) {
 	var baggageVal = "e30="
 	span.SetBaggageItem("request-tenancy", baggageVal)
 	assert.NotNil(t, span.Context())
-	ctx := contextWithSpan(Background(), span.Context())
+	ctx := WithSpanContext(Background(), span.Context())
 	header := &shared.Header{
 		Fields: map[string][]byte{},
 	}
@@ -140,7 +140,7 @@ func TestConsistentInjectionExtraction(t *testing.T) {
 	extractedCtx, err := ctxProp.ExtractToWorkflow(Background(), NewHeaderReader(header))
 	require.NoError(t, err)
 
-	extractedSpanContext := spanFromContext(extractedCtx)
+	extractedSpanContext := GetSpanContext(extractedCtx)
 	extractedSpanContext.ForeachBaggageItem(func(k, v string) bool {
 		if k == "request-tenancy" {
 			assert.Equal(t, v, baggageVal)

@@ -103,7 +103,7 @@ func (t *tracingContextPropagator) InjectFromWorkflow(
 	hw HeaderWriter,
 ) error {
 	// retrieve span from context object
-	spanContext := spanFromContext(ctx)
+	spanContext := GetSpanContext(ctx)
 	if spanContext == nil {
 		return nil
 	}
@@ -119,5 +119,5 @@ func (t *tracingContextPropagator) ExtractToWorkflow(
 		// did not find a tracing span, just return the current context
 		return ctx, nil
 	}
-	return contextWithSpan(ctx, spanContext), nil
+	return WithSpanContext(ctx, spanContext), nil
 }
