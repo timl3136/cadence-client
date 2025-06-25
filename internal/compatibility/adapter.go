@@ -268,6 +268,11 @@ func (a thrift2protoAdapter) RestartWorkflowExecution(ctx context.Context, reque
 	return thrift.RestartWorkflowExecutionResponse(response), proto.Error(err)
 }
 
+func (a thrift2protoAdapter) DeleteDomain(ctx context.Context, DeleteRequest *shared.DeleteDomainRequest, opts ...yarpc.CallOption) error {
+	//TODO implement me
+	return nil
+}
+
 type domainAPIthriftAdapter struct {
 	service workflowserviceclient.Interface
 }

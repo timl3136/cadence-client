@@ -511,3 +511,8 @@ func (w *workflowServiceAuthWrapper) RestartWorkflowExecution(ctx context.Contex
 	opts = append(opts, *tokenHeader)
 	return w.service.RestartWorkflowExecution(ctx, request, opts...)
 }
+
+func (w *workflowServiceAuthWrapper) DeleteDomain(ctx context.Context, DeleteRequest *shared.DeleteDomainRequest, opts ...yarpc.CallOption) error {
+	//TODO implement me
+	return nil
+}

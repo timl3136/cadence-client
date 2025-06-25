@@ -93,6 +93,7 @@ const (
 	scopeRefreshWorkflowTasks                      = CadenceMetricsPrefix + "RefreshWorkflowTasks"
 	scopeNameGetTaskListsByDomain                  = CadenceMetricsPrefix + "GetTaskListsByDomain"
 	scopeRestartWorkflowExecution                  = CadenceMetricsPrefix + "RestartWorkflowExecution"
+	scopeDeleteDomain                              = CadenceMetricsPrefix + "DeleteDomain"
 )
 
 // NewWorkflowServiceWrapper creates a new wrapper to WorkflowService that will emit metrics for each service call.
@@ -443,4 +444,12 @@ func (w *workflowServiceMetricsWrapper) RestartWorkflowExecution(ctx context.Con
 	resp, err := w.service.RestartWorkflowExecution(ctx, request, opts...)
 	scope.handleError(err)
 	return resp, err
+}
+
+func (w *workflowServiceMetricsWrapper) DeleteDomain(ctx context.Context, request *shared.DeleteDomainRequest, opts ...yarpc.CallOption) error {
+	//TODO implement me
+	scope := w.getOperationScope(scopeDeleteDomain)
+	err := w.service.DeleteDomain(ctx, request, opts...)
+	scope.handleError(err)
+	return err
 }
