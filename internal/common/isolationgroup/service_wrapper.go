@@ -313,6 +313,6 @@ func (w *workflowServiceIsolationGroupWrapper) RestartWorkflowExecution(ctx cont
 }
 
 func (w *workflowServiceIsolationGroupWrapper) DeleteDomain(ctx context.Context, DeleteRequest *shared.DeleteDomainRequest, opts ...yarpc.CallOption) error {
-	//TODO implement me
-	return nil
+	opts = append(opts, w.getIsolationGroupIdentifier())
+	return w.service.DeleteDomain(ctx, DeleteRequest, opts...)
 }
