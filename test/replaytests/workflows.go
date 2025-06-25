@@ -47,20 +47,19 @@ func Workflow(ctx workflow.Context, name string) error {
 	v := workflow.GetVersion(ctx, "test-change", workflow.DefaultVersion, 1)
 	if v == workflow.DefaultVersion {
 		return errors.New("no default-version history")
-	} else {
-		err := workflow.ExecuteActivity(ctx, helloworldActivity, name).Get(ctx, &helloworldResult)
-		if err != nil {
-			logger.Error("First activity failed.", zap.Error(err))
-			return err
-		}
-		err = workflow.ExecuteActivity(ctx, helloworldActivity, name).Get(ctx, &helloworldResult)
-		if err != nil {
-			logger.Error("Second activity failed.", zap.Error(err))
-			return err
-		}
+	}
+	err := workflow.ExecuteActivity(ctx, helloworldActivity, name).Get(ctx, &helloworldResult)
+	if err != nil {
+		logger.Error("First activity failed.", zap.Error(err))
+		return err
+	}
+	err = workflow.ExecuteActivity(ctx, helloworldActivity, name).Get(ctx, &helloworldResult)
+	if err != nil {
+		logger.Error("Second activity failed.", zap.Error(err))
+		return err
 	}
 
-	err := workflow.ExecuteActivity(ctx, helloworldActivity, name).Get(ctx, &helloworldResult)
+	err = workflow.ExecuteActivity(ctx, helloworldActivity, name).Get(ctx, &helloworldResult)
 	if err != nil {
 		logger.Error("Third activity failed.", zap.Error(err))
 		return err

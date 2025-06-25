@@ -157,7 +157,7 @@ func Decision(d *shared.Decision) *apiv1.Decision {
 				TaskStartToCloseTimeout:      secondsToDuration(attr.TaskStartToCloseTimeoutSeconds),
 				ParentClosePolicy:            ParentClosePolicy(attr.ParentClosePolicy),
 				Control:                      attr.Control,
-				WorkflowIdReusePolicy:        WorkflowIdReusePolicy(attr.WorkflowIdReusePolicy),
+				WorkflowIdReusePolicy:        WorkflowIDReusePolicy(attr.WorkflowIdReusePolicy),
 				RetryPolicy:                  RetryPolicy(attr.RetryPolicy),
 				CronSchedule:                 attr.GetCronSchedule(),
 				Header:                       Header(attr.Header),

@@ -635,10 +635,10 @@ func (ts *IntegrationTestSuite) registerWorkflowsAndActivities(w worker.Worker) 
 	ts.activities.register(w)
 }
 
-func (ts *IntegrationTestSuite) waitForWorkflowFinish(wid string, runId string) error {
+func (ts *IntegrationTestSuite) waitForWorkflowFinish(wid string, runID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
 	defer cancel()
-	wfRun := ts.libClient.GetWorkflow(ctx, wid, runId)
+	wfRun := ts.libClient.GetWorkflow(ctx, wid, runID)
 	return wfRun.Get(ctx, nil)
 }
 

@@ -38,6 +38,118 @@ import (
 )
 
 type (
+	// Worker hosts workflow and activity implementations.
+	// Use worker.New(...) to create an instance.
+	Worker interface {
+		Registry
+
+		// Start starts the worker in a non-blocking fashion
+		Start() error
+		// Run is a blocking start and cleans up resources when killed
+		// returns error only if it fails to start the worker
+		Run() error
+		// Stop cleans up any resources opened by worker
+		Stop()
+	}
+
+	// Registry exposes registration functions to consumers.
+	Registry interface {
+		WorkflowRegistry
+		ActivityRegistry
+	}
+
+	// WorkflowRegistry exposes workflow registration functions to consumers.
+	WorkflowRegistry interface {
+		// RegisterWorkflow - registers a workflow function with the worker.
+		// A workflow takes a workflow.Context and input and returns a (result, error) or just error.
+		// Examples:
+		//	func sampleWorkflow(ctx workflow.Context, input []byte) (result []byte, err error)
+		//	func sampleWorkflow(ctx workflow.Context, arg1 int, arg2 string) (result []byte, err error)
+		//	func sampleWorkflow(ctx workflow.Context) (result []byte, err error)
+		//	func sampleWorkflow(ctx workflow.Context, arg1 int) (result string, err error)
+		// Serialization of all primitive types, structures is supported ... except channels, functions, variadic, unsafe pointer.
+		// For global registration consider workflow.Register
+		// This method panics if workflowFunc doesn't comply with the expected format or tries to register the same workflow
+		RegisterWorkflow(w interface{})
+
+		// RegisterWorkflowWithOptions registers the workflow function with options.
+		// The user can use options to provide an external name for the workflow or leave it empty if no
+		// external name is required. This can be used as
+		//  worker.RegisterWorkflowWithOptions(sampleWorkflow, RegisterWorkflowOptions{})
+		//  worker.RegisterWorkflowWithOptions(sampleWorkflow, RegisterWorkflowOptions{Name: "foo"})
+		// This method panics if workflowFunc doesn't comply with the expected format or tries to register the same workflow
+		// type name twice. Use workflow.RegisterOptions.DisableAlreadyRegisteredCheck to allow multiple registrations.
+		RegisterWorkflowWithOptions(w interface{}, options RegisterWorkflowOptions)
+
+		// GetRegisteredWorkflows returns information on all workflows registered on the worker.
+		// the RegistryInfo interface can be used to read workflow names, paths or retrieve the workflow functions.
+		// The workflow name is by default the method name. However, if the workflow was registered
+		// with options (see Worker.RegisterWorkflowWithOptions), the workflow may have customized name.
+		// For chained registries, this returns a combined list of all registered workflows from the
+		// worker instance that calls this method to the global registry. In this case, the list may contain duplicate names.
+		GetRegisteredWorkflows() []RegistryWorkflowInfo
+	}
+
+	// ActivityRegistry exposes activity registration functions to consumers.
+	ActivityRegistry interface {
+		// RegisterActivity - register an activity function or a pointer to a structure with the worker.
+		// An activity function takes a context and input and returns a (result, error) or just error.
+		//
+		// And activity struct is a structure with all its exported methods treated as activities. The default
+		// name of each activity is the method name.
+		//
+		// Examples:
+		//	func sampleActivity(ctx context.Context, input []byte) (result []byte, err error)
+		//	func sampleActivity(ctx context.Context, arg1 int, arg2 string) (result *customerStruct, err error)
+		//	func sampleActivity(ctx context.Context) (err error)
+		//	func sampleActivity() (result string, err error)
+		//	func sampleActivity(arg1 bool) (result int, err error)
+		//	func sampleActivity(arg1 bool) (err error)
+		//
+		//  type Activities struct {
+		//     // fields
+		//  }
+		//  func (a *Activities) SampleActivity1(ctx context.Context, arg1 int, arg2 string) (result *customerStruct, err error) {
+		//    ...
+		//  }
+		//
+		//  func (a *Activities) SampleActivity2(ctx context.Context, arg1 int, arg2 *customerStruct) (result string, err error) {
+		//    ...
+		//  }
+		//
+		// Serialization of all primitive types, structures is supported ... except channels, functions, variadic, unsafe pointer.
+		// This method panics if activityFunc doesn't comply with the expected format or an activity with the same
+		// type name is registered more than once.
+		// For global registration consider activity.Register
+		RegisterActivity(a interface{})
+
+		// RegisterActivityWithOptions registers the activity function or struct pointer with options.
+		// The user can use options to provide an external name for the activity or leave it empty if no
+		// external name is required. This can be used as
+		//  worker.RegisterActivityWithOptions(barActivity, RegisterActivityOptions{})
+		//  worker.RegisterActivityWithOptions(barActivity, RegisterActivityOptions{Name: "barExternal"})
+		// When registering the structure that implements activities the name is used as a prefix that is
+		// prepended to the activity method name.
+		//  worker.RegisterActivityWithOptions(&Activities{ ... }, RegisterActivityOptions{Name: "MyActivities_"})
+		// To override each name of activities defined through a structure register the methods one by one:
+		// activities := &Activities{ ... }
+		// worker.RegisterActivityWithOptions(activities.SampleActivity1, RegisterActivityOptions{Name: "Sample1"})
+		// worker.RegisterActivityWithOptions(activities.SampleActivity2, RegisterActivityOptions{Name: "Sample2"})
+		// See RegisterActivity function for more info.
+		// The other use of options is to disable duplicated activity registration check
+		// which might be useful for integration tests.
+		// worker.RegisterActivityWithOptions(barActivity, RegisterActivityOptions{DisableAlreadyRegisteredCheck: true})
+		RegisterActivityWithOptions(a interface{}, options RegisterActivityOptions)
+
+		// GetRegisteredActivities returns information on all activities registered on the worker.
+		// the RegistryInfo interface can be used to read activity names, paths or retrieve the activity functions.
+		// The activity name is by default the method name. However, if the workflow was registered
+		// with options (see Worker.RegisterWorkflowWithOptions), the workflow may have customized name.
+		// For chained registries, this returns a combined list of all registered activities from the
+		// worker instance that calls this method to the global registry. In this case, the list may contain duplicate names.
+		GetRegisteredActivities() []RegistryActivityInfo
+	}
+
 	// WorkerOptions is used to configure a worker instance.
 	// The current timeout resolution implementation is in seconds and uses math.Ceil(d.Seconds()) as the duration. But is
 	// subjected to change in the future.
@@ -330,7 +442,7 @@ func NewWorker(
 	domain string,
 	taskList string,
 	options WorkerOptions,
-) (*aggregatedWorker, error) {
+) (Worker, error) {
 	return newAggregatedWorker(service, domain, taskList, options)
 }
 

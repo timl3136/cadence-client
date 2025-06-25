@@ -384,12 +384,12 @@ func TestQueryWorkflowResponse(t *testing.T) {
 }
 func TestRecordActivityTaskHeartbeatByIDRequest(t *testing.T) {
 	for _, item := range []*apiv1.RecordActivityTaskHeartbeatByIDRequest{nil, {}, &testdata.RecordActivityTaskHeartbeatByIDRequest} {
-		assert.Equal(t, item, proto.RecordActivityTaskHeartbeatByIdRequest(thrift.RecordActivityTaskHeartbeatByIdRequest(item)))
+		assert.Equal(t, item, proto.RecordActivityTaskHeartbeatByIDRequest(thrift.RecordActivityTaskHeartbeatByIDRequest(item)))
 	}
 }
 func TestRecordActivityTaskHeartbeatByIDResponse(t *testing.T) {
 	for _, item := range []*apiv1.RecordActivityTaskHeartbeatByIDResponse{nil, {}, &testdata.RecordActivityTaskHeartbeatByIDResponse} {
-		assert.Equal(t, item, proto.RecordActivityTaskHeartbeatByIdResponse(thrift.RecordActivityTaskHeartbeatByIdResponse(item)))
+		assert.Equal(t, item, proto.RecordActivityTaskHeartbeatByIDResponse(thrift.RecordActivityTaskHeartbeatByIDResponse(item)))
 	}
 }
 func TestRecordActivityTaskHeartbeatRequest(t *testing.T) {
@@ -454,7 +454,7 @@ func TestResetWorkflowExecutionResponse(t *testing.T) {
 }
 func TestRespondActivityTaskCanceledByIDRequest(t *testing.T) {
 	for _, item := range []*apiv1.RespondActivityTaskCanceledByIDRequest{nil, {}, &testdata.RespondActivityTaskCanceledByIDRequest} {
-		assert.Equal(t, item, proto.RespondActivityTaskCanceledByIdRequest(thrift.RespondActivityTaskCanceledByIdRequest(item)))
+		assert.Equal(t, item, proto.RespondActivityTaskCanceledByIDRequest(thrift.RespondActivityTaskCanceledByIDRequest(item)))
 	}
 }
 func TestRespondActivityTaskCanceledRequest(t *testing.T) {
@@ -464,7 +464,7 @@ func TestRespondActivityTaskCanceledRequest(t *testing.T) {
 }
 func TestRespondActivityTaskCompletedByIDRequest(t *testing.T) {
 	for _, item := range []*apiv1.RespondActivityTaskCompletedByIDRequest{nil, {}, &testdata.RespondActivityTaskCompletedByIDRequest} {
-		assert.Equal(t, item, proto.RespondActivityTaskCompletedByIdRequest(thrift.RespondActivityTaskCompletedByIdRequest(item)))
+		assert.Equal(t, item, proto.RespondActivityTaskCompletedByIDRequest(thrift.RespondActivityTaskCompletedByIDRequest(item)))
 	}
 }
 func TestRespondActivityTaskCompletedRequest(t *testing.T) {
@@ -474,7 +474,7 @@ func TestRespondActivityTaskCompletedRequest(t *testing.T) {
 }
 func TestRespondActivityTaskFailedByIDRequest(t *testing.T) {
 	for _, item := range []*apiv1.RespondActivityTaskFailedByIDRequest{nil, {}, &testdata.RespondActivityTaskFailedByIDRequest} {
-		assert.Equal(t, item, proto.RespondActivityTaskFailedByIdRequest(thrift.RespondActivityTaskFailedByIdRequest(item)))
+		assert.Equal(t, item, proto.RespondActivityTaskFailedByIDRequest(thrift.RespondActivityTaskFailedByIDRequest(item)))
 	}
 }
 func TestRespondActivityTaskFailedRequest(t *testing.T) {
@@ -589,7 +589,7 @@ func TestSupportedClientVersions(t *testing.T) {
 }
 func TestTaskIDBlock(t *testing.T) {
 	for _, item := range []*apiv1.TaskIDBlock{nil, {}, &testdata.TaskIDBlock} {
-		assert.Equal(t, item, proto.TaskIdBlock(thrift.TaskIdBlock(item)))
+		assert.Equal(t, item, proto.TaskIDBlock(thrift.TaskIDBlock(item)))
 	}
 }
 func TestTaskList(t *testing.T) {
@@ -656,13 +656,13 @@ func TestWorkflowExecution(t *testing.T) {
 	for _, item := range []*apiv1.WorkflowExecution{nil, {}, &testdata.WorkflowExecution} {
 		assert.Equal(t, item, proto.WorkflowExecution(thrift.WorkflowExecution(item)))
 	}
-	assert.Empty(t, thrift.WorkflowId(nil))
-	assert.Empty(t, thrift.RunId(nil))
+	assert.Empty(t, thrift.WorkflowID(nil))
+	assert.Empty(t, thrift.RunID(nil))
 }
 func TestExternalExecutionInfo(t *testing.T) {
 	assert.Nil(t, proto.ExternalExecutionInfo(nil, nil))
 	assert.Nil(t, thrift.ExternalWorkflowExecution(nil))
-	assert.Nil(t, thrift.ExternalInitiatedId(nil))
+	assert.Nil(t, thrift.ExternalInitiatedID(nil))
 	assert.Panics(t, func() { proto.ExternalExecutionInfo(nil, common.Int64Ptr(testdata.EventID1)) })
 	assert.Panics(t, func() { proto.ExternalExecutionInfo(thrift.WorkflowExecution(&testdata.WorkflowExecution), nil) })
 	info := proto.ExternalExecutionInfo(thrift.WorkflowExecution(&testdata.WorkflowExecution), common.Int64Ptr(testdata.EventID1))

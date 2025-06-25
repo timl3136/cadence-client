@@ -72,14 +72,14 @@ func WorkflowExecution(t *apiv1.WorkflowExecution) *shared.WorkflowExecution {
 	}
 }
 
-func WorkflowId(t *apiv1.WorkflowExecution) *string {
+func WorkflowID(t *apiv1.WorkflowExecution) *string {
 	if t == nil {
 		return nil
 	}
 	return &t.WorkflowId
 }
 
-func RunId(t *apiv1.WorkflowExecution) *string {
+func RunID(t *apiv1.WorkflowExecution) *string {
 	if t == nil {
 		return nil
 	}
@@ -334,7 +334,7 @@ func DataBlob(t *apiv1.DataBlob) *shared.DataBlob {
 	}
 }
 
-func ExternalInitiatedId(t *apiv1.ExternalExecutionInfo) *int64 {
+func ExternalInitiatedID(t *apiv1.ExternalExecutionInfo) *int64 {
 	if t == nil {
 		return nil
 	}
@@ -391,11 +391,11 @@ func TaskListStatus(t *apiv1.TaskListStatus) *shared.TaskListStatus {
 		ReadLevel:        &t.ReadLevel,
 		AckLevel:         &t.AckLevel,
 		RatePerSecond:    &t.RatePerSecond,
-		TaskIDBlock:      TaskIdBlock(t.TaskIdBlock),
+		TaskIDBlock:      TaskIDBlock(t.TaskIdBlock),
 	}
 }
 
-func TaskIdBlock(t *apiv1.TaskIDBlock) *shared.TaskIDBlock {
+func TaskIDBlock(t *apiv1.TaskIDBlock) *shared.TaskIDBlock {
 	if t == nil {
 		return nil
 	}
@@ -427,7 +427,7 @@ func WorkflowExecutionInfo(t *apiv1.WorkflowExecutionInfo) *shared.WorkflowExecu
 		CloseTime:        timeToUnixNano(t.CloseTime),
 		CloseStatus:      WorkflowExecutionCloseStatus(t.CloseStatus),
 		HistoryLength:    &t.HistoryLength,
-		ParentDomainId:   ParentDomainId(t.ParentExecutionInfo),
+		ParentDomainId:   ParentDomainID(t.ParentExecutionInfo),
 		ParentExecution:  ParentWorkflowExecution(t.ParentExecutionInfo),
 		ExecutionTime:    timeToUnixNano(t.ExecutionTime),
 		Memo:             Memo(t.Memo),
@@ -438,7 +438,7 @@ func WorkflowExecutionInfo(t *apiv1.WorkflowExecutionInfo) *shared.WorkflowExecu
 	}
 }
 
-func ParentDomainId(pei *apiv1.ParentExecutionInfo) *string {
+func ParentDomainID(pei *apiv1.ParentExecutionInfo) *string {
 	if pei == nil {
 		return nil
 	}
@@ -452,7 +452,7 @@ func ParentDomainName(pei *apiv1.ParentExecutionInfo) *string {
 	return &pei.DomainName
 }
 
-func ParentInitiatedId(pei *apiv1.ParentExecutionInfo) *int64 {
+func ParentInitiatedID(pei *apiv1.ParentExecutionInfo) *int64 {
 	if pei == nil {
 		return nil
 	}
@@ -492,8 +492,8 @@ func PendingChildExecutionInfo(t *apiv1.PendingChildExecutionInfo) *shared.Pendi
 		return nil
 	}
 	return &shared.PendingChildExecutionInfo{
-		WorkflowID:        WorkflowId(t.WorkflowExecution),
-		RunID:             RunId(t.WorkflowExecution),
+		WorkflowID:        WorkflowID(t.WorkflowExecution),
+		RunID:             RunID(t.WorkflowExecution),
 		WorkflowTypName:   &t.WorkflowTypeName,
 		InitiatedID:       &t.InitiatedId,
 		ParentClosePolicy: ParentClosePolicy(t.ParentClosePolicy),

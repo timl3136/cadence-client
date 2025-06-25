@@ -1656,10 +1656,7 @@ func (s *WorkflowTestSuiteUnitTest) Test_ChildWorkflowContextPropagation() {
 		cwo := ChildWorkflowOptions{ExecutionStartToCloseTimeout: time.Hour /* this is currently ignored by test suite */}
 		ctx = WithChildWorkflowOptions(ctx, cwo)
 		childCtx := WithValue(ctx, contextKey(testHeader), "test-data-for-child")
-		if err := ExecuteChildWorkflow(childCtx, childWorkflowFn).Get(childCtx, nil); err != nil {
-			return err
-		}
-		return nil
+		return ExecuteChildWorkflow(childCtx, childWorkflowFn).Get(childCtx, nil)
 	}
 
 	s.SetContextPropagators([]ContextPropagator{NewStringMapPropagator([]string{testHeader})})

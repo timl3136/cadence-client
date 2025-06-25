@@ -215,9 +215,8 @@ func (ldat *locallyDispatchedActivityTunnel) getTask() *locallyDispatchedActivit
 	case ready := <-task.readyCh:
 		if ready {
 			return task
-		} else {
-			return nil
 		}
+		return nil
 	case <-ldat.stopCh:
 		return nil
 	}
@@ -512,7 +511,7 @@ func (wtp *workflowTaskPoller) handleDecisionTaskCompletedRequest(ctx context.Co
 				// assume the activity type is in registry otherwise the activity would be failed and retried from server
 				activityTask := &locallyDispatchedActivityTask{
 					readyCh:                       make(chan bool, 1),
-					ActivityId:                    attr.ActivityId,
+					ActivityID:                    attr.ActivityId,
 					ActivityType:                  attr.ActivityType,
 					Input:                         attr.Input,
 					Header:                        attr.Header,
@@ -537,7 +536,7 @@ func (wtp *workflowTaskPoller) handleDecisionTaskCompletedRequest(ctx context.Co
 			for _, at := range activityTasks {
 				started := false
 				if response != nil && err == nil {
-					if adl, ok := response.ActivitiesToDispatchLocally[*at.ActivityId]; ok {
+					if adl, ok := response.ActivitiesToDispatchLocally[*at.ActivityID]; ok {
 						at.ScheduledTimestamp = adl.ScheduledTimestamp
 						at.StartedTimestamp = adl.StartedTimestamp
 						at.ScheduledTimestampOfThisAttempt = adl.ScheduledTimestampOfThisAttempt
@@ -1226,7 +1225,7 @@ func (atp *locallyDispatchedActivityTaskPoller) pollLocallyDispatchedActivity(ct
 	atp.metricsScope.Counter(metrics.ActivityPollCounter).Inc(1)
 	atp.metricsScope.Counter(metrics.LocallyDispatchedActivityPollSucceedCounter).Inc(1)
 	response := &s.PollForActivityTaskResponse{}
-	response.ActivityId = task.ActivityId
+	response.ActivityId = task.ActivityID
 	response.ActivityType = task.ActivityType
 	response.Header = task.Header
 	response.Input = task.Input

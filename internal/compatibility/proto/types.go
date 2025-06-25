@@ -58,13 +58,13 @@ func WorkflowExecution(t *shared.WorkflowExecution) *apiv1.WorkflowExecution {
 	}
 }
 
-func WorkflowRunPair(workflowId, runId string) *apiv1.WorkflowExecution {
-	if workflowId == "" && runId == "" {
+func WorkflowRunPair(workflowID, runID string) *apiv1.WorkflowExecution {
+	if workflowID == "" && runID == "" {
 		return nil
 	}
 	return &apiv1.WorkflowExecution{
-		WorkflowId: workflowId,
-		RunId:      runId,
+		WorkflowId: workflowID,
+		RunId:      runID,
 	}
 }
 
@@ -374,11 +374,11 @@ func TaskListStatus(t *shared.TaskListStatus) *apiv1.TaskListStatus {
 		ReadLevel:        t.GetReadLevel(),
 		AckLevel:         t.GetAckLevel(),
 		RatePerSecond:    t.GetRatePerSecond(),
-		TaskIdBlock:      TaskIdBlock(t.TaskIDBlock),
+		TaskIdBlock:      TaskIDBlock(t.TaskIDBlock),
 	}
 }
 
-func TaskIdBlock(t *shared.TaskIDBlock) *apiv1.TaskIDBlock {
+func TaskIDBlock(t *shared.TaskIDBlock) *apiv1.TaskIDBlock {
 	if t == nil {
 		return nil
 	}

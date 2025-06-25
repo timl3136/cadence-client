@@ -1723,13 +1723,13 @@ func (s *workflowClientTestSuite) TestCancelWorkflowBackwardsCompatible() {
 }
 
 type PartialCancelRequestMatcher struct {
-	wfId  *string
+	wfID  *string
 	cause *string
 }
 
-func newPartialCancelRequestMatcher(wfId *string, cause *string) gomock.Matcher {
+func newPartialCancelRequestMatcher(wfID *string, cause *string) gomock.Matcher {
 	return &PartialCancelRequestMatcher{
-		wfId:  wfId,
+		wfID:  wfID,
 		cause: cause,
 	}
 }
@@ -1740,7 +1740,7 @@ func (m *PartialCancelRequestMatcher) Matches(a interface{}) bool {
 		return false
 	}
 
-	return (aEx.Cause == m.cause || *aEx.Cause == *m.cause) && *aEx.WorkflowExecution.WorkflowId == *m.wfId
+	return (aEx.Cause == m.cause || *aEx.Cause == *m.cause) && *aEx.WorkflowExecution.WorkflowId == *m.wfID
 }
 
 func (m *PartialCancelRequestMatcher) String() string {

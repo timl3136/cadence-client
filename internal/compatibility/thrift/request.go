@@ -189,14 +189,14 @@ func QueryWorkflowRequest(t *apiv1.QueryWorkflowRequest) *shared.QueryWorkflowRe
 	}
 }
 
-func RecordActivityTaskHeartbeatByIdRequest(t *apiv1.RecordActivityTaskHeartbeatByIDRequest) *shared.RecordActivityTaskHeartbeatByIDRequest {
+func RecordActivityTaskHeartbeatByIDRequest(t *apiv1.RecordActivityTaskHeartbeatByIDRequest) *shared.RecordActivityTaskHeartbeatByIDRequest {
 	if t == nil {
 		return nil
 	}
 	return &shared.RecordActivityTaskHeartbeatByIDRequest{
 		Domain:     &t.Domain,
-		WorkflowID: WorkflowId(t.WorkflowExecution),
-		RunID:      RunId(t.WorkflowExecution),
+		WorkflowID: WorkflowID(t.WorkflowExecution),
+		RunID:      RunID(t.WorkflowExecution),
 		ActivityID: &t.ActivityId,
 		Details:    Payload(t.Details),
 		Identity:   &t.Identity,
@@ -271,14 +271,14 @@ func ResetWorkflowExecutionRequest(t *apiv1.ResetWorkflowExecutionRequest) *shar
 	}
 }
 
-func RespondActivityTaskCanceledByIdRequest(t *apiv1.RespondActivityTaskCanceledByIDRequest) *shared.RespondActivityTaskCanceledByIDRequest {
+func RespondActivityTaskCanceledByIDRequest(t *apiv1.RespondActivityTaskCanceledByIDRequest) *shared.RespondActivityTaskCanceledByIDRequest {
 	if t == nil {
 		return nil
 	}
 	return &shared.RespondActivityTaskCanceledByIDRequest{
 		Domain:     &t.Domain,
-		WorkflowID: WorkflowId(t.WorkflowExecution),
-		RunID:      RunId(t.WorkflowExecution),
+		WorkflowID: WorkflowID(t.WorkflowExecution),
+		RunID:      RunID(t.WorkflowExecution),
 		ActivityID: &t.ActivityId,
 		Details:    Payload(t.Details),
 		Identity:   &t.Identity,
@@ -296,14 +296,14 @@ func RespondActivityTaskCanceledRequest(t *apiv1.RespondActivityTaskCanceledRequ
 	}
 }
 
-func RespondActivityTaskCompletedByIdRequest(t *apiv1.RespondActivityTaskCompletedByIDRequest) *shared.RespondActivityTaskCompletedByIDRequest {
+func RespondActivityTaskCompletedByIDRequest(t *apiv1.RespondActivityTaskCompletedByIDRequest) *shared.RespondActivityTaskCompletedByIDRequest {
 	if t == nil {
 		return nil
 	}
 	return &shared.RespondActivityTaskCompletedByIDRequest{
 		Domain:     &t.Domain,
-		WorkflowID: WorkflowId(t.WorkflowExecution),
-		RunID:      RunId(t.WorkflowExecution),
+		WorkflowID: WorkflowID(t.WorkflowExecution),
+		RunID:      RunID(t.WorkflowExecution),
 		ActivityID: &t.ActivityId,
 		Result:     Payload(t.Result),
 		Identity:   &t.Identity,
@@ -321,14 +321,14 @@ func RespondActivityTaskCompletedRequest(t *apiv1.RespondActivityTaskCompletedRe
 	}
 }
 
-func RespondActivityTaskFailedByIdRequest(t *apiv1.RespondActivityTaskFailedByIDRequest) *shared.RespondActivityTaskFailedByIDRequest {
+func RespondActivityTaskFailedByIDRequest(t *apiv1.RespondActivityTaskFailedByIDRequest) *shared.RespondActivityTaskFailedByIDRequest {
 	if t == nil {
 		return nil
 	}
 	return &shared.RespondActivityTaskFailedByIDRequest{
 		Domain:     &t.Domain,
-		WorkflowID: WorkflowId(t.WorkflowExecution),
-		RunID:      RunId(t.WorkflowExecution),
+		WorkflowID: WorkflowID(t.WorkflowExecution),
+		RunID:      RunID(t.WorkflowExecution),
 		ActivityID: &t.ActivityId,
 		Reason:     FailureReason(t.Failure),
 		Details:    FailureDetails(t.Failure),
@@ -426,7 +426,7 @@ func SignalWithStartWorkflowExecutionRequest(t *apiv1.SignalWithStartWorkflowExe
 		request.TaskStartToCloseTimeoutSeconds = durationToSeconds(t.StartRequest.TaskStartToCloseTimeout)
 		request.Identity = &t.StartRequest.Identity
 		request.RequestId = &t.StartRequest.RequestId
-		request.WorkflowIdReusePolicy = WorkflowIdReusePolicy(t.StartRequest.WorkflowIdReusePolicy)
+		request.WorkflowIdReusePolicy = WorkflowIDReusePolicy(t.StartRequest.WorkflowIdReusePolicy)
 		request.RetryPolicy = RetryPolicy(t.StartRequest.RetryPolicy)
 		request.CronSchedule = &t.StartRequest.CronSchedule
 		request.Memo = Memo(t.StartRequest.Memo)
@@ -466,7 +466,7 @@ func StartWorkflowExecutionRequest(t *apiv1.StartWorkflowExecutionRequest) *shar
 		TaskStartToCloseTimeoutSeconds:      durationToSeconds(t.TaskStartToCloseTimeout),
 		Identity:                            &t.Identity,
 		RequestId:                           &t.RequestId,
-		WorkflowIdReusePolicy:               WorkflowIdReusePolicy(t.WorkflowIdReusePolicy),
+		WorkflowIdReusePolicy:               WorkflowIDReusePolicy(t.WorkflowIdReusePolicy),
 		RetryPolicy:                         RetryPolicy(t.RetryPolicy),
 		CronSchedule:                        &t.CronSchedule,
 		Memo:                                Memo(t.Memo),
