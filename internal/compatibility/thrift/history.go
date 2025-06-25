@@ -583,7 +583,7 @@ func StartChildWorkflowExecutionInitiatedEventAttributes(t *apiv1.StartChildWork
 		ParentClosePolicy:                   ParentClosePolicy(t.ParentClosePolicy),
 		Control:                             t.Control,
 		DecisionTaskCompletedEventId:        &t.DecisionTaskCompletedEventId,
-		WorkflowIdReusePolicy:               WorkflowIdReusePolicy(t.WorkflowIdReusePolicy),
+		WorkflowIdReusePolicy:               WorkflowIDReusePolicy(t.WorkflowIdReusePolicy),
 		RetryPolicy:                         RetryPolicy(t.RetryPolicy),
 		CronSchedule:                        &t.CronSchedule,
 		Header:                              Header(t.Header),
@@ -644,7 +644,7 @@ func WorkflowExecutionCancelRequestedEventAttributes(t *apiv1.WorkflowExecutionC
 	}
 	return &shared.WorkflowExecutionCancelRequestedEventAttributes{
 		Cause:                     &t.Cause,
-		ExternalInitiatedEventId:  ExternalInitiatedId(t.ExternalExecutionInfo),
+		ExternalInitiatedEventId:  ExternalInitiatedID(t.ExternalExecutionInfo),
 		ExternalWorkflowExecution: ExternalWorkflowExecution(t.ExternalExecutionInfo),
 		Identity:                  &t.Identity,
 	}
@@ -723,7 +723,7 @@ func WorkflowExecutionStartedEventAttributes(t *apiv1.WorkflowExecutionStartedEv
 		WorkflowType:                        WorkflowType(t.WorkflowType),
 		ParentWorkflowDomain:                ParentDomainName(t.ParentExecutionInfo),
 		ParentWorkflowExecution:             ParentWorkflowExecution(t.ParentExecutionInfo),
-		ParentInitiatedEventId:              ParentInitiatedId(t.ParentExecutionInfo),
+		ParentInitiatedEventId:              ParentInitiatedID(t.ParentExecutionInfo),
 		TaskList:                            TaskList(t.TaskList),
 		Input:                               Payload(t.Input),
 		ExecutionStartToCloseTimeoutSeconds: durationToSeconds(t.ExecutionStartToCloseTimeout),

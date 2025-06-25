@@ -534,7 +534,7 @@ func StartChildWorkflowExecutionInitiatedEventAttributes(t *shared.StartChildWor
 		ParentClosePolicy:            ParentClosePolicy(t.ParentClosePolicy),
 		Control:                      t.Control,
 		DecisionTaskCompletedEventId: t.GetDecisionTaskCompletedEventId(),
-		WorkflowIdReusePolicy:        WorkflowIdReusePolicy(t.WorkflowIdReusePolicy),
+		WorkflowIdReusePolicy:        WorkflowIDReusePolicy(t.WorkflowIdReusePolicy),
 		RetryPolicy:                  RetryPolicy(t.RetryPolicy),
 		CronSchedule:                 t.GetCronSchedule(),
 		Header:                       Header(t.Header),

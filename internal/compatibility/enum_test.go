@@ -330,8 +330,8 @@ func TestWorkflowIDReusePolicy(t *testing.T) {
 		apiv1.WorkflowIdReusePolicy_WORKFLOW_ID_REUSE_POLICY_REJECT_DUPLICATE,
 		apiv1.WorkflowIdReusePolicy_WORKFLOW_ID_REUSE_POLICY_TERMINATE_IF_RUNNING,
 	} {
-		assert.Equal(t, item, proto.WorkflowIdReusePolicy(thrift.WorkflowIdReusePolicy(item)))
+		assert.Equal(t, item, proto.WorkflowIDReusePolicy(thrift.WorkflowIDReusePolicy(item)))
 	}
-	assert.Panics(t, func() { proto.WorkflowIdReusePolicy(shared.WorkflowIdReusePolicy(UnknownValue).Ptr()) })
-	assert.Panics(t, func() { thrift.WorkflowIdReusePolicy(apiv1.WorkflowIdReusePolicy(UnknownValue)) })
+	assert.Panics(t, func() { proto.WorkflowIDReusePolicy(shared.WorkflowIdReusePolicy(UnknownValue).Ptr()) })
+	assert.Panics(t, func() { thrift.WorkflowIDReusePolicy(apiv1.WorkflowIdReusePolicy(UnknownValue)) })
 }

@@ -106,7 +106,7 @@ func ContinueAsNewInitiator(t *shared.ContinueAsNewInitiator) apiv1.ContinueAsNe
 	panic("unexpected enum value")
 }
 
-func WorkflowIdReusePolicy(t *shared.WorkflowIdReusePolicy) apiv1.WorkflowIdReusePolicy {
+func WorkflowIDReusePolicy(t *shared.WorkflowIdReusePolicy) apiv1.WorkflowIdReusePolicy {
 	if t == nil {
 		return apiv1.WorkflowIdReusePolicy_WORKFLOW_ID_REUSE_POLICY_INVALID
 	}

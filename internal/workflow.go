@@ -1105,8 +1105,10 @@ func getWorkflowHeader(ctx Context, ctxProps []ContextPropagator) *s.Header {
 
 // WorkflowInfo information about currently executing workflow
 type WorkflowInfo struct {
-	WorkflowExecution                   WorkflowExecution
-	OriginalRunId                       string // The original runID before resetting. Using it instead of current runID can make workflow decision determinstic after reset
+	WorkflowExecution WorkflowExecution
+	// The original runID before resetting. Using it instead of current runID can make workflow decision determinstic after reset
+	// revive:disable-next-line this is an public field that is already exposed
+	OriginalRunId                       string
 	WorkflowType                        WorkflowType
 	TaskListName                        string
 	ExecutionStartToCloseTimeoutSeconds int32

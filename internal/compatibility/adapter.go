@@ -145,8 +145,8 @@ func (a thrift2protoAdapter) RecordActivityTaskHeartbeat(ctx context.Context, re
 }
 
 func (a thrift2protoAdapter) RecordActivityTaskHeartbeatByID(ctx context.Context, request *shared.RecordActivityTaskHeartbeatByIDRequest, opts ...yarpc.CallOption) (*shared.RecordActivityTaskHeartbeatResponse, error) {
-	response, err := a.worker.RecordActivityTaskHeartbeatByID(ctx, proto.RecordActivityTaskHeartbeatByIdRequest(request), opts...)
-	return thrift.RecordActivityTaskHeartbeatByIdResponse(response), thrift.Error(err)
+	response, err := a.worker.RecordActivityTaskHeartbeatByID(ctx, proto.RecordActivityTaskHeartbeatByIDRequest(request), opts...)
+	return thrift.RecordActivityTaskHeartbeatByIDResponse(response), thrift.Error(err)
 }
 
 func (a thrift2protoAdapter) RegisterDomain(ctx context.Context, request *shared.RegisterDomainRequest, opts ...yarpc.CallOption) error {
@@ -175,7 +175,7 @@ func (a thrift2protoAdapter) RespondActivityTaskCanceled(ctx context.Context, re
 }
 
 func (a thrift2protoAdapter) RespondActivityTaskCanceledByID(ctx context.Context, request *shared.RespondActivityTaskCanceledByIDRequest, opts ...yarpc.CallOption) error {
-	_, err := a.worker.RespondActivityTaskCanceledByID(ctx, proto.RespondActivityTaskCanceledByIdRequest(request), opts...)
+	_, err := a.worker.RespondActivityTaskCanceledByID(ctx, proto.RespondActivityTaskCanceledByIDRequest(request), opts...)
 	return thrift.Error(err)
 }
 
@@ -185,7 +185,7 @@ func (a thrift2protoAdapter) RespondActivityTaskCompleted(ctx context.Context, r
 }
 
 func (a thrift2protoAdapter) RespondActivityTaskCompletedByID(ctx context.Context, request *shared.RespondActivityTaskCompletedByIDRequest, opts ...yarpc.CallOption) error {
-	_, err := a.worker.RespondActivityTaskCompletedByID(ctx, proto.RespondActivityTaskCompletedByIdRequest(request), opts...)
+	_, err := a.worker.RespondActivityTaskCompletedByID(ctx, proto.RespondActivityTaskCompletedByIDRequest(request), opts...)
 	return thrift.Error(err)
 }
 
@@ -195,7 +195,7 @@ func (a thrift2protoAdapter) RespondActivityTaskFailed(ctx context.Context, requ
 }
 
 func (a thrift2protoAdapter) RespondActivityTaskFailedByID(ctx context.Context, request *shared.RespondActivityTaskFailedByIDRequest, opts ...yarpc.CallOption) error {
-	_, err := a.worker.RespondActivityTaskFailedByID(ctx, proto.RespondActivityTaskFailedByIdRequest(request), opts...)
+	_, err := a.worker.RespondActivityTaskFailedByID(ctx, proto.RespondActivityTaskFailedByIDRequest(request), opts...)
 	return thrift.Error(err)
 }
 
@@ -272,7 +272,7 @@ type domainAPIthriftAdapter struct {
 	service workflowserviceclient.Interface
 }
 
-func NewDomainAPITriftAdapter(thrift workflowserviceclient.Interface) domainAPIthriftAdapter {
+func NewDomainAPITriftAdapter(thrift workflowserviceclient.Interface) domainAPIthriftAdapter { //revive:disable-line:unexported-return this is not used at all, consider removing
 	return domainAPIthriftAdapter{thrift}
 }
 
@@ -301,7 +301,7 @@ type workflowAPIthriftAdapter struct {
 	service workflowserviceclient.Interface
 }
 
-func NewWorkflowAPITriftAdapter(thrift workflowserviceclient.Interface) workflowAPIthriftAdapter {
+func NewWorkflowAPITriftAdapter(thrift workflowserviceclient.Interface) workflowAPIthriftAdapter { //revive:disable-line:unexported-return this is not used at all, consider removing
 	return workflowAPIthriftAdapter{thrift}
 }
 
@@ -362,7 +362,7 @@ type workerAPIthriftAdapter struct {
 	service workflowserviceclient.Interface
 }
 
-func NewWorkerAPITriftAdapter(thrift workflowserviceclient.Interface) workerAPIthriftAdapter {
+func NewWorkerAPITriftAdapter(thrift workflowserviceclient.Interface) workerAPIthriftAdapter { //revive:disable-line:unexported-return this is not used at all, consider removing
 	return workerAPIthriftAdapter{thrift}
 }
 
@@ -387,7 +387,7 @@ func (a workerAPIthriftAdapter) RespondActivityTaskCompleted(ctx context.Context
 	return &apiv1.RespondActivityTaskCompletedResponse{}, proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RespondActivityTaskCompletedByID(ctx context.Context, request *apiv1.RespondActivityTaskCompletedByIDRequest, opts ...yarpc.CallOption) (*apiv1.RespondActivityTaskCompletedByIDResponse, error) {
-	err := a.service.RespondActivityTaskCompletedByID(ctx, thrift.RespondActivityTaskCompletedByIdRequest(request), opts...)
+	err := a.service.RespondActivityTaskCompletedByID(ctx, thrift.RespondActivityTaskCompletedByIDRequest(request), opts...)
 	return &apiv1.RespondActivityTaskCompletedByIDResponse{}, proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RespondActivityTaskFailed(ctx context.Context, request *apiv1.RespondActivityTaskFailedRequest, opts ...yarpc.CallOption) (*apiv1.RespondActivityTaskFailedResponse, error) {
@@ -395,7 +395,7 @@ func (a workerAPIthriftAdapter) RespondActivityTaskFailed(ctx context.Context, r
 	return &apiv1.RespondActivityTaskFailedResponse{}, proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RespondActivityTaskFailedByID(ctx context.Context, request *apiv1.RespondActivityTaskFailedByIDRequest, opts ...yarpc.CallOption) (*apiv1.RespondActivityTaskFailedByIDResponse, error) {
-	err := a.service.RespondActivityTaskFailedByID(ctx, thrift.RespondActivityTaskFailedByIdRequest(request), opts...)
+	err := a.service.RespondActivityTaskFailedByID(ctx, thrift.RespondActivityTaskFailedByIDRequest(request), opts...)
 	return &apiv1.RespondActivityTaskFailedByIDResponse{}, proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RespondActivityTaskCanceled(ctx context.Context, request *apiv1.RespondActivityTaskCanceledRequest, opts ...yarpc.CallOption) (*apiv1.RespondActivityTaskCanceledResponse, error) {
@@ -403,7 +403,7 @@ func (a workerAPIthriftAdapter) RespondActivityTaskCanceled(ctx context.Context,
 	return &apiv1.RespondActivityTaskCanceledResponse{}, proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RespondActivityTaskCanceledByID(ctx context.Context, request *apiv1.RespondActivityTaskCanceledByIDRequest, opts ...yarpc.CallOption) (*apiv1.RespondActivityTaskCanceledByIDResponse, error) {
-	err := a.service.RespondActivityTaskCanceledByID(ctx, thrift.RespondActivityTaskCanceledByIdRequest(request), opts...)
+	err := a.service.RespondActivityTaskCanceledByID(ctx, thrift.RespondActivityTaskCanceledByIDRequest(request), opts...)
 	return &apiv1.RespondActivityTaskCanceledByIDResponse{}, proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RecordActivityTaskHeartbeat(ctx context.Context, request *apiv1.RecordActivityTaskHeartbeatRequest, opts ...yarpc.CallOption) (*apiv1.RecordActivityTaskHeartbeatResponse, error) {
@@ -411,8 +411,8 @@ func (a workerAPIthriftAdapter) RecordActivityTaskHeartbeat(ctx context.Context,
 	return proto.RecordActivityTaskHeartbeatResponse(response), proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RecordActivityTaskHeartbeatByID(ctx context.Context, request *apiv1.RecordActivityTaskHeartbeatByIDRequest, opts ...yarpc.CallOption) (*apiv1.RecordActivityTaskHeartbeatByIDResponse, error) {
-	response, err := a.service.RecordActivityTaskHeartbeatByID(ctx, thrift.RecordActivityTaskHeartbeatByIdRequest(request), opts...)
-	return proto.RecordActivityTaskHeartbeatByIdResponse(response), proto.Error(err)
+	response, err := a.service.RecordActivityTaskHeartbeatByID(ctx, thrift.RecordActivityTaskHeartbeatByIDRequest(request), opts...)
+	return proto.RecordActivityTaskHeartbeatByIDResponse(response), proto.Error(err)
 }
 func (a workerAPIthriftAdapter) RespondQueryTaskCompleted(ctx context.Context, request *apiv1.RespondQueryTaskCompletedRequest, opts ...yarpc.CallOption) (*apiv1.RespondQueryTaskCompletedResponse, error) {
 	err := a.service.RespondQueryTaskCompleted(ctx, thrift.RespondQueryTaskCompletedRequest(request), opts...)
@@ -427,7 +427,7 @@ type visibilityAPIthriftAdapter struct {
 	service workflowserviceclient.Interface
 }
 
-func NewVisibilityAPITriftAdapter(thrift workflowserviceclient.Interface) visibilityAPIthriftAdapter {
+func NewVisibilityAPITriftAdapter(thrift workflowserviceclient.Interface) visibilityAPIthriftAdapter { //revive:disable-line:unexported-return this is not used at all, consider removing
 	return visibilityAPIthriftAdapter{thrift}
 }
 

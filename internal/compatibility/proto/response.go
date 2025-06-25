@@ -249,7 +249,7 @@ func QueryWorkflowResponse(t *shared.QueryWorkflowResponse) *apiv1.QueryWorkflow
 	}
 }
 
-func RecordActivityTaskHeartbeatByIdResponse(t *shared.RecordActivityTaskHeartbeatResponse) *apiv1.RecordActivityTaskHeartbeatByIDResponse {
+func RecordActivityTaskHeartbeatByIDResponse(t *shared.RecordActivityTaskHeartbeatResponse) *apiv1.RecordActivityTaskHeartbeatByIDResponse {
 	if t == nil {
 		return nil
 	}

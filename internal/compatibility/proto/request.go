@@ -188,7 +188,7 @@ func QueryWorkflowRequest(t *shared.QueryWorkflowRequest) *apiv1.QueryWorkflowRe
 	}
 }
 
-func RecordActivityTaskHeartbeatByIdRequest(t *shared.RecordActivityTaskHeartbeatByIDRequest) *apiv1.RecordActivityTaskHeartbeatByIDRequest {
+func RecordActivityTaskHeartbeatByIDRequest(t *shared.RecordActivityTaskHeartbeatByIDRequest) *apiv1.RecordActivityTaskHeartbeatByIDRequest {
 	if t == nil {
 		return nil
 	}
@@ -269,7 +269,7 @@ func ResetWorkflowExecutionRequest(t *shared.ResetWorkflowExecutionRequest) *api
 	}
 }
 
-func RespondActivityTaskCanceledByIdRequest(t *shared.RespondActivityTaskCanceledByIDRequest) *apiv1.RespondActivityTaskCanceledByIDRequest {
+func RespondActivityTaskCanceledByIDRequest(t *shared.RespondActivityTaskCanceledByIDRequest) *apiv1.RespondActivityTaskCanceledByIDRequest {
 	if t == nil {
 		return nil
 	}
@@ -293,7 +293,7 @@ func RespondActivityTaskCanceledRequest(t *shared.RespondActivityTaskCanceledReq
 	}
 }
 
-func RespondActivityTaskCompletedByIdRequest(t *shared.RespondActivityTaskCompletedByIDRequest) *apiv1.RespondActivityTaskCompletedByIDRequest {
+func RespondActivityTaskCompletedByIDRequest(t *shared.RespondActivityTaskCompletedByIDRequest) *apiv1.RespondActivityTaskCompletedByIDRequest {
 	if t == nil {
 		return nil
 	}
@@ -317,7 +317,7 @@ func RespondActivityTaskCompletedRequest(t *shared.RespondActivityTaskCompletedR
 	}
 }
 
-func RespondActivityTaskFailedByIdRequest(t *shared.RespondActivityTaskFailedByIDRequest) *apiv1.RespondActivityTaskFailedByIDRequest {
+func RespondActivityTaskFailedByIDRequest(t *shared.RespondActivityTaskFailedByIDRequest) *apiv1.RespondActivityTaskFailedByIDRequest {
 	if t == nil {
 		return nil
 	}
@@ -413,7 +413,7 @@ func SignalWithStartWorkflowExecutionRequest(t *shared.SignalWithStartWorkflowEx
 			TaskStartToCloseTimeout:      secondsToDuration(t.TaskStartToCloseTimeoutSeconds),
 			Identity:                     t.GetIdentity(),
 			RequestId:                    t.GetRequestId(),
-			WorkflowIdReusePolicy:        WorkflowIdReusePolicy(t.WorkflowIdReusePolicy),
+			WorkflowIdReusePolicy:        WorkflowIDReusePolicy(t.WorkflowIdReusePolicy),
 			RetryPolicy:                  RetryPolicy(t.RetryPolicy),
 			CronSchedule:                 t.GetCronSchedule(),
 			Memo:                         Memo(t.Memo),
@@ -468,7 +468,7 @@ func StartWorkflowExecutionRequest(t *shared.StartWorkflowExecutionRequest) *api
 		TaskStartToCloseTimeout:      secondsToDuration(t.TaskStartToCloseTimeoutSeconds),
 		Identity:                     t.GetIdentity(),
 		RequestId:                    t.GetRequestId(),
-		WorkflowIdReusePolicy:        WorkflowIdReusePolicy(t.WorkflowIdReusePolicy),
+		WorkflowIdReusePolicy:        WorkflowIDReusePolicy(t.WorkflowIdReusePolicy),
 		RetryPolicy:                  RetryPolicy(t.RetryPolicy),
 		CronSchedule:                 t.GetCronSchedule(),
 		Memo:                         Memo(t.Memo),

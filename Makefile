@@ -252,7 +252,7 @@ $Q +$(MAKE) --no-print-directory $(addprefix $(BUILD)/,$(1))
 endef
 
 .PHONY: build
-build: $(BUILD)/fmt ## ensure all packages build
+build: $(BUILD)/lint ## ensure all packages build
 	go build ./...
 	$Q # caution: some errors are reported on stdout for some reason
 	go test -exec true ./... >/dev/null

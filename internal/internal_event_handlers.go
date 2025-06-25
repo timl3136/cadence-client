@@ -143,7 +143,7 @@ type (
 		readyCh                         chan bool
 		TaskToken                       []byte
 		WorkflowExecution               *shared.WorkflowExecution
-		ActivityId                      *string
+		ActivityID                      *string
 		ActivityType                    *shared.ActivityType
 		Input                           []byte
 		ScheduledTimestamp              *int64
