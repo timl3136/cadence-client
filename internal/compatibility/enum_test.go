@@ -344,5 +344,5 @@ func TestCronOverlapPolicy(t *testing.T) {
 	} {
 		assert.Equal(t, v, proto.CronOverlapPolicy(thrift.CronOverlapPolicy(v)))
 	}
-	assert.Panics(t, func() { proto.CronOverlapPolicy(thrift.CronOverlapPolicy(999)) })
+	assert.Equal(t, apiv1.CronOverlapPolicy_CRON_OVERLAP_POLICY_INVALID, proto.CronOverlapPolicy(thrift.CronOverlapPolicy(999)))
 }

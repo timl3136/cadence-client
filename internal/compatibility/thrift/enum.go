@@ -391,5 +391,6 @@ func CronOverlapPolicy(t apiv1.CronOverlapPolicy) *shared.CronOverlapPolicy {
 	case apiv1.CronOverlapPolicy_CRON_OVERLAP_POLICY_BUFFER_ONE:
 		return shared.CronOverlapPolicyBufferone.Ptr()
 	}
-	return shared.CronOverlapPolicySkipped.Ptr()
+	// we treat any unknown value as invalid
+	return nil
 }
