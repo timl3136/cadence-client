@@ -1298,14 +1298,9 @@ func Test_augmentWorkerOptions(t *testing.T) {
 				WorkerLocalActivitiesPerSecond:          20,
 				TaskListActivitiesPerSecond:             30,
 				MaxConcurrentActivityTaskPollers:        10,
-				MinConcurrentActivityTaskPollers:        2,
 				MaxConcurrentDecisionTaskExecutionSize:  40,
 				WorkerDecisionTasksPerSecond:            50,
 				MaxConcurrentDecisionTaskPollers:        15,
-				MinConcurrentDecisionTaskPollers:        4,
-				PollerAutoScalerCooldown:                time.Minute * 2,
-				PollerAutoScalerTargetUtilization:       0.8,
-				PollerAutoScalerDryRun:                  false,
 				Identity:                                "identity",
 				MetricsScope:                            tally.NoopScope,
 				Logger:                                  zap.NewNop(),
@@ -1327,6 +1322,14 @@ func Test_augmentWorkerOptions(t *testing.T) {
 				ShadowOptions:                           ShadowOptions{},
 				FeatureFlags:                            FeatureFlags{},
 				Authorization:                           nil,
+				AutoScalerOptions: AutoScalerOptions{
+					Enabled:                  true,
+					PollerMinCount:           10,
+					PollerMaxCount:           20,
+					Cooldown:                 time.Minute * 3,
+					PollerWaitTimeUpperBound: time.Millisecond * 200,
+					PollerWaitTimeLowerBound: time.Millisecond * 100,
+				},
 			}},
 			want: WorkerOptions{
 				MaxConcurrentActivityExecutionSize:      3,
@@ -1335,14 +1338,9 @@ func Test_augmentWorkerOptions(t *testing.T) {
 				WorkerLocalActivitiesPerSecond:          20,
 				TaskListActivitiesPerSecond:             30,
 				MaxConcurrentActivityTaskPollers:        10,
-				MinConcurrentActivityTaskPollers:        2,
 				MaxConcurrentDecisionTaskExecutionSize:  40,
 				WorkerDecisionTasksPerSecond:            50,
 				MaxConcurrentDecisionTaskPollers:        15,
-				MinConcurrentDecisionTaskPollers:        4,
-				PollerAutoScalerCooldown:                time.Minute * 2,
-				PollerAutoScalerTargetUtilization:       0.8,
-				PollerAutoScalerDryRun:                  false,
 				Identity:                                "identity",
 				MetricsScope:                            tally.NoopScope,
 				Logger:                                  zap.NewNop(),
@@ -1364,6 +1362,14 @@ func Test_augmentWorkerOptions(t *testing.T) {
 				ShadowOptions:                           ShadowOptions{},
 				FeatureFlags:                            FeatureFlags{},
 				Authorization:                           nil,
+				AutoScalerOptions: AutoScalerOptions{
+					Enabled:                  true,
+					PollerMinCount:           10,
+					PollerMaxCount:           20,
+					Cooldown:                 time.Minute * 3,
+					PollerWaitTimeUpperBound: time.Millisecond * 200,
+					PollerWaitTimeLowerBound: time.Millisecond * 100,
+				},
 			},
 		},
 		{
@@ -1376,14 +1382,9 @@ func Test_augmentWorkerOptions(t *testing.T) {
 				WorkerLocalActivitiesPerSecond:          100000,
 				TaskListActivitiesPerSecond:             100000,
 				MaxConcurrentActivityTaskPollers:        2,
-				MinConcurrentActivityTaskPollers:        1,
 				MaxConcurrentDecisionTaskExecutionSize:  1000,
 				WorkerDecisionTasksPerSecond:            100000,
 				MaxConcurrentDecisionTaskPollers:        2,
-				MinConcurrentDecisionTaskPollers:        2,
-				PollerAutoScalerCooldown:                time.Minute,
-				PollerAutoScalerTargetUtilization:       0.6,
-				PollerAutoScalerDryRun:                  false,
 				Identity:                                "",
 				MetricsScope:                            nil,
 				Logger:                                  nil,
@@ -1405,6 +1406,14 @@ func Test_augmentWorkerOptions(t *testing.T) {
 				ShadowOptions:                           ShadowOptions{},
 				FeatureFlags:                            FeatureFlags{},
 				Authorization:                           nil,
+				AutoScalerOptions: AutoScalerOptions{
+					Enabled:                  false,
+					PollerMinCount:           2,
+					PollerMaxCount:           200,
+					Cooldown:                 time.Second * 10,
+					PollerWaitTimeUpperBound: time.Millisecond * 256,
+					PollerWaitTimeLowerBound: time.Millisecond * 16,
+				},
 			},
 		},
 	}
@@ -1499,6 +1508,60 @@ func TestTestValidateFnFormat_Workflow(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			err := validateFnFormat(reflect.TypeOf(tc.fn), true)
 			assert.ErrorContains(t, err, tc.wantErr)
+		})
+	}
+}
+
+func TestGetTaskAutoConfigHint(t *testing.T) {
+
+	hint := shared.AutoConfigHint{
+		EnableAutoConfig:   common.BoolPtr(true),
+		PollerWaitTimeInMs: common.Int64Ptr(100),
+	}
+
+	for _, tt := range []struct {
+		name string
+		task interface{}
+		want *shared.AutoConfigHint
+	}{
+		{
+			"decision task",
+			&workflowTask{
+				task: &shared.PollForDecisionTaskResponse{AutoConfigHint: &hint}},
+			&hint,
+		},
+		{
+			"empty decision task",
+			&workflowTask{
+				autoConfigHint: &hint},
+			&hint,
+		},
+		{
+			"activity task",
+			&activityTask{
+				task: &shared.PollForActivityTaskResponse{AutoConfigHint: &hint}},
+			&hint,
+		},
+		{
+			"empty activity task",
+			&activityTask{
+				autoConfigHint: &hint},
+			&hint,
+		},
+		{
+			"localactivity task",
+			&localActivityTask{},
+			nil,
+		},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			task, ok := tt.task.(autoConfigHintAwareTask)
+			if tt.want == nil {
+				assert.False(t, ok)
+			} else {
+				assert.True(t, ok)
+				assert.Equal(t, tt.want, task.getAutoConfigHint())
+			}
 		})
 	}
 }
