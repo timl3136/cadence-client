@@ -269,8 +269,8 @@ func (a thrift2protoAdapter) RestartWorkflowExecution(ctx context.Context, reque
 }
 
 func (a thrift2protoAdapter) DeleteDomain(ctx context.Context, DeleteRequest *shared.DeleteDomainRequest, opts ...yarpc.CallOption) error {
-	//TODO implement me
-	return nil
+	_, err := a.domain.DeleteDomain(ctx, proto.DeleteDomainRequest(DeleteRequest), opts...)
+	return err
 }
 
 type domainAPIthriftAdapter struct {

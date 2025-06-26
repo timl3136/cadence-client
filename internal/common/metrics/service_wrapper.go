@@ -447,7 +447,6 @@ func (w *workflowServiceMetricsWrapper) RestartWorkflowExecution(ctx context.Con
 }
 
 func (w *workflowServiceMetricsWrapper) DeleteDomain(ctx context.Context, request *shared.DeleteDomainRequest, opts ...yarpc.CallOption) error {
-	//TODO implement me
 	scope := w.getOperationScope(scopeDeleteDomain)
 	err := w.service.DeleteDomain(ctx, request, opts...)
 	scope.handleError(err)

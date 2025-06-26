@@ -670,3 +670,13 @@ func RestartWorkflowExecutionRequest(r *shared.RestartWorkflowExecutionRequest) 
 
 	return &request
 }
+
+func DeleteDomainRequest(r *shared.DeleteDomainRequest) *apiv1.DeleteDomainRequest {
+	if r == nil {
+		return nil
+	}
+	return &apiv1.DeleteDomainRequest{
+		Name:          r.GetName(),
+		SecurityToken: r.GetSecurityToken(),
+	}
+}
