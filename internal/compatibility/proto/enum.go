@@ -404,5 +404,5 @@ func CronOverlapPolicy(t *shared.CronOverlapPolicy) apiv1.CronOverlapPolicy {
 	case shared.CronOverlapPolicyBufferone:
 		return apiv1.CronOverlapPolicy_CRON_OVERLAP_POLICY_BUFFER_ONE
 	}
-	panic("unexpected enum value")
+	return apiv1.CronOverlapPolicy_CRON_OVERLAP_POLICY_INVALID
 }
